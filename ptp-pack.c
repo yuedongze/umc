@@ -209,3 +209,171 @@ ptp_unpack_DI (PTPParams *params, char* data, PTPDeviceInfo *di)
 		PTP_di_OperationsSupported+totallen,
 		&len);
 }
+
+/* ObjectInfo pack/unpack */
+
+#define PTP_oi_StorageID		 0
+#define PTP_oi_ObjectFormat		 4
+#define PTP_oi_ProtectionStatus		 6
+#define PTP_oi_ObjectCompressedSize	 8
+#define PTP_oi_ThumbFormat		12
+#define PTP_oi_ThumbCompressedSize	14
+#define PTP_oi_ThumbPixWidth		18
+#define PTP_oi_ThumbPixHeight		22
+#define PTP_oi_ImagePixWidth		26
+#define PTP_oi_ImagePixHeight		30
+#define PTP_oi_ImageBitDepth		34
+#define PTP_oi_ParentObject		38
+#define PTP_oi_AssociationType		42
+#define PTP_oi_AssociationDesc		44
+#define PTP_oi_SequenceNumber		48
+#define PTP_oi_filenamelen		52
+#define PTP_oi_Filename			53
+
+static inline uint32_t
+ptp_pack_OI (PTPParams *params, PTPObjectInfo *oi, char** oidataptr)
+{
+	char* oidata;
+	uint8_t filenamelen;
+	uint8_t capturedatelen=0;
+	/* let's allocate some memory first; XXX i'm sure it's wrong */
+	oidata=malloc(PTP_oi_Filename+(strlen(oi->Filename)+1)*2+4);
+	/* the caller should free it after use! */
+#if 0
+	char *capture_date="20020101T010101"; /* XXX Fake date */
+#endif
+	memset (oidata, 0, (PTP_oi_Filename+(strlen(oi->Filename)+1)*2+4));
+	htod32a(&oidata[PTP_oi_StorageID],oi->StorageID);
+	htod16a(&oidata[PTP_oi_ObjectFormat],oi->ObjectFormat);
+	htod16a(&oidata[PTP_oi_ProtectionStatus],oi->ProtectionStatus);
+	htod32a(&oidata[PTP_oi_ObjectCompressedSize],oi->ObjectCompressedSize);
+	htod16a(&oidata[PTP_oi_ThumbFormat],oi->ThumbFormat);
+	htod32a(&oidata[PTP_oi_ThumbCompressedSize],oi->ThumbCompressedSize);
+	htod32a(&oidata[PTP_oi_ThumbPixWidth],oi->ThumbPixWidth);
+	htod32a(&oidata[PTP_oi_ThumbPixHeight],oi->ThumbPixHeight);
+	htod32a(&oidata[PTP_oi_ImagePixWidth],oi->ImagePixWidth);
+	htod32a(&oidata[PTP_oi_ImagePixHeight],oi->ImagePixHeight);
+	htod32a(&oidata[PTP_oi_ImageBitDepth],oi->ImageBitDepth);
+	htod32a(&oidata[PTP_oi_ParentObject],oi->ParentObject);
+	htod16a(&oidata[PTP_oi_AssociationType],oi->AssociationType);
+	htod32a(&oidata[PTP_oi_AssociationDesc],oi->AssociationDesc);
+	htod32a(&oidata[PTP_oi_SequenceNumber],oi->SequenceNumber);
+	
+	ptp_pack_string(params, oi->Filename, oidata, PTP_oi_filenamelen, &filenamelen);
+/*
+	filenamelen=(uint8_t)strlen(oi->Filename);
+	htod8a(&req->data[PTP_oi_filenamelen],filenamelen+1);
+	for (i=0;i<filenamelen && i< PTP_MAXSTRLEN; i++) {
+		req->data[PTP_oi_Filename+i*2]=oi->Filename[i];
+	}
+*/
+	/*
+	 *XXX Fake date.
+	 * for example Kodak sets Capture date on the basis of EXIF data.
+	 * Spec says that this field is from perspective of Initiator.
+	 */
+#if 0	/* seems now we don't need any data packed in OI dataset... for now ;)*/
+	capturedatelen=strlen(capture_date);
+	htod8a(&data[PTP_oi_Filename+(filenamelen+1)*2],
+		capturedatelen+1);
+	for (i=0;i<capturedatelen && i< PTP_MAXSTRLEN; i++) {
+		data[PTP_oi_Filename+(i+filenamelen+1)*2+1]=capture_date[i];
+	}
+	htod8a(&data[PTP_oi_Filename+(filenamelen+capturedatelen+2)*2+1],
+		capturedatelen+1);
+	for (i=0;i<capturedatelen && i< PTP_MAXSTRLEN; i++) {
+		data[PTP_oi_Filename+(i+filenamelen+capturedatelen+2)*2+2]=
+		  capture_date[i];
+	}
+#endif
+	/* XXX this function should return dataset length */
+	
+	*oidataptr=oidata;
+	return (PTP_oi_Filename+(filenamelen+1)*2+(capturedatelen+1)*4);
+}
+
+static inline void
+ptp_unpack_OI (PTPParams *params, char* data, PTPObjectInfo *oi)
+{
+	uint8_t filenamelen;
+	uint8_t capturedatelen;
+	char *capture_date;
+	char tmp[16];
+	struct tm tm;
+
+	memset(&tm,0,sizeof(tm));
+
+	oi->StorageID=dtoh32a(&data[PTP_oi_StorageID]);
+	oi->ObjectFormat=dtoh16a(&data[PTP_oi_ObjectFormat]);
+	oi->ProtectionStatus=dtoh16a(&data[PTP_oi_ProtectionStatus]);
+	oi->ObjectCompressedSize=dtoh32a(&data[PTP_oi_ObjectCompressedSize]);
+	oi->ThumbFormat=dtoh16a(&data[PTP_oi_ThumbFormat]);
+	oi->ThumbCompressedSize=dtoh32a(&data[PTP_oi_ThumbCompressedSize]);
+	oi->ThumbPixWidth=dtoh32a(&data[PTP_oi_ThumbPixWidth]);
+	oi->ThumbPixHeight=dtoh32a(&data[PTP_oi_ThumbPixHeight]);
+	oi->ImagePixWidth=dtoh32a(&data[PTP_oi_ImagePixWidth]);
+	oi->ImagePixHeight=dtoh32a(&data[PTP_oi_ImagePixHeight]);
+	oi->ImageBitDepth=dtoh32a(&data[PTP_oi_ImageBitDepth]);
+	oi->ParentObject=dtoh32a(&data[PTP_oi_ParentObject]);
+	oi->AssociationType=dtoh16a(&data[PTP_oi_AssociationType]);
+	oi->AssociationDesc=dtoh32a(&data[PTP_oi_AssociationDesc]);
+	oi->SequenceNumber=dtoh32a(&data[PTP_oi_SequenceNumber]);
+	oi->Filename= ptp_unpack_string(params, data, PTP_oi_filenamelen, &filenamelen);
+
+	capture_date = ptp_unpack_string(params, data,
+		PTP_oi_filenamelen+filenamelen*2+1, &capturedatelen);
+	/* subset of ISO 8601, without '.s' tenths of second and 
+	 * time zone
+	 */
+	if (capturedatelen>15)
+	{
+		strncpy (tmp, capture_date, 4);
+		tmp[4] = 0;
+		tm.tm_year=atoi (tmp) - 1900;
+		strncpy (tmp, capture_date + 4, 2);
+		tmp[2] = 0;
+		tm.tm_mon = atoi (tmp) - 1;
+		strncpy (tmp, capture_date + 6, 2);
+		tmp[2] = 0;
+		tm.tm_mday = atoi (tmp);
+		strncpy (tmp, capture_date + 9, 2);
+		tmp[2] = 0;
+		tm.tm_hour = atoi (tmp);
+		strncpy (tmp, capture_date + 11, 2);
+		tmp[2] = 0;
+		tm.tm_min = atoi (tmp);
+		strncpy (tmp, capture_date + 13, 2);
+		tmp[2] = 0;
+		tm.tm_sec = atoi (tmp);
+		oi->CaptureDate=mktime (&tm);
+	}
+	free(capture_date);
+
+	/* now it's modification date ;) */
+	capture_date = ptp_unpack_string(params, data,
+		PTP_oi_filenamelen+filenamelen*2
+		+capturedatelen*2+2,&capturedatelen);
+	if (capturedatelen>15)
+	{
+		strncpy (tmp, capture_date, 4);
+		tmp[4] = 0;
+		tm.tm_year=atoi (tmp) - 1900;
+		strncpy (tmp, capture_date + 4, 2);
+		tmp[2] = 0;
+		tm.tm_mon = atoi (tmp) - 1;
+		strncpy (tmp, capture_date + 6, 2);
+		tmp[2] = 0;
+		tm.tm_mday = atoi (tmp);
+		strncpy (tmp, capture_date + 9, 2);
+		tmp[2] = 0;
+		tm.tm_hour = atoi (tmp);
+		strncpy (tmp, capture_date + 11, 2);
+		tmp[2] = 0;
+		tm.tm_min = atoi (tmp);
+		strncpy (tmp, capture_date + 13, 2);
+		tmp[2] = 0;
+		tm.tm_sec = atoi (tmp);
+		oi->ModificationDate=mktime (&tm);
+	}
+	free(capture_date);
+}
