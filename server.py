@@ -64,6 +64,9 @@ def hello():
 
 		if 'cap' in request.form.keys():
 			capture_still()
+			
+		if 'shutdown' in request.form.keys():
+			sony.shutdown()()
 	else:
 		sony.getliveobj('static/object.jpg')
 	return '''
@@ -89,6 +92,7 @@ def hello():
 	    <p><input name=shoot type=submit value=SHOOT id=haha></p>
 	    <p><input name=stop type=submit value=STOP></p>
 	    <p><input name=cap type=submit value="Take a Pic"></p>
+		<p><input name=shutdown type=submit value="Shutdown"></p>
 
 	</form>
 		  <p>............LiveView............</p>
