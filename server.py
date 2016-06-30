@@ -36,9 +36,9 @@ def hello():
 		res = 'Recording'
 		
 	if request.method == 'GET':
-		if (time.time()-t) > 0.1:
+		if (time()-t) > 0.1:
 			sony.getliveobj()
-			t = time.time()
+			t = time()
 		
 	if request.method == 'POST':
 		if 'shoot' in request.form.keys():
