@@ -1301,7 +1301,7 @@ save_object(PTPParams *params, uint32_t handle, char* filename, PTPObjectInfo oi
 	if (ret!=PTP_RC_OK) {
 		printf ("error!\n");
 		ptp_perror(params,ret);
-		if (ret==PTP_ERROR_IO) clear_stall((PTP_USB *)(params->data));
+		//if (ret==PTP_ERROR_IO) clear_stall((PTP_USB *)(params->data));
 	} else {
 		printf("is done.\n");
 	}
