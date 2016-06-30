@@ -88,7 +88,7 @@ def hello():
 	</form>
 		  <p>............LiveView............</p>
 	  
-		  <img src="static/object1.jpg" width=300 id="liveview" />
+		  <img src="static/object.jpg" width=300 id="liveview" />
 
 	<p><button id="reload" onclick="updateimage()">Live View</button></p>
 	<p><button id="stop">Stop</button></p>
@@ -97,7 +97,7 @@ def hello():
 		  x=document.getElementById("liveview");
 		  counter = 0
 		  function updateimage(){
-			  x.src="static/object.jpg?rand="+ Math.random();
+			  x.src="static/object.jpg?t="+ new Date().getTime();
 			  timer1 = setTimeout(updateimage, 500);
 		  }
 	</script>
