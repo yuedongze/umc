@@ -94,7 +94,7 @@ def hello():
 	</form>
 		  <p>............LiveView............</p>
 	  
-		  <img src="static/object.jpg" id="liveview" />
+		  <img src="static/object1.jpg" id="liveview" />
 
 	<p><button id="reload" onclick="updateimage()">Live View</button></p>
 	<p><button id="stop">Stop</button></p>
