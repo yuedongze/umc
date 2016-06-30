@@ -38,7 +38,7 @@ def hello():
 		
 	if request.method == 'GET':
 		if (time()-tmr.t) > 0.1:
-			sony.getliveobj()
+			sony.getliveobj('object')
 			tmr.t = time()
 		
 	if request.method == 'POST':
