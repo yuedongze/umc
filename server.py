@@ -5,7 +5,8 @@ import parser
 from time import *
 app = Flask(__name__)
 
-t=0
+class tmr:
+	t = 0
 
 def umc_start():
 	sony.connect()
@@ -36,9 +37,9 @@ def hello():
 		res = 'Recording'
 		
 	if request.method == 'GET':
-		if (time()-t) > 0.1:
+		if (time()-tmr.t) > 0.1:
 			sony.getliveobj()
-			t = time()
+			tmr.t = time()
 		
 	if request.method == 'POST':
 		if 'shoot' in request.form.keys():
