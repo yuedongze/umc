@@ -7,7 +7,6 @@ app = Flask(__name__)
 
 class tmr:
 	t = 0
-	cnt = 0
 
 def umc_start():
 	sony.connect()
@@ -39,12 +38,7 @@ def hello():
 		
 	if request.method == 'GET':
 		if (time()-tmr.t) > 0.1:
-			if (tmr.cnt == 0):
-				sony.getliveobj('static/object1.jpg')
-				tmr.cnt = 1
-			else:
-				sony.getliveobj('static/object2.jpg')
-				tmr.cnt = 0
+			sony.getliveobj('static/object.jpg')
 			tmr.t = time()
 		
 	if request.method == 'POST':
@@ -103,13 +97,7 @@ def hello():
 		  x=document.getElementById("liveview");
 		  counter = 0
 		  function updateimage(){
-			  if (counter == 0) {
-			  	x.src="static/object1.jpg";
-				counter = 1;
-			  } else {
-			  	x.src="static/object2.jpg";
-				counter = 0;
-			  }
+			  x.src="static/object.jpg?rand="+ Math.random();
 			  timer1 = setTimeout(updateimage, 500);
 		  }
 	</script>
