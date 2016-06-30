@@ -1331,10 +1331,15 @@ out:
 static PyObject * getliveobj(PyObject * self, PyObject * args){
 	PyObject * res;
 	char* data;
+	char* name;
+	
+    if (!PyArg_ParseTuple(args, "s", &name)) {
+        return NULL;
+    }
 	
 	ptp_getobjectinfo (&sony_params, 0xFFFFC002, &sony_objinfo);
 	
-	save_object(&sony_params, 0xFFFFC002, "object", sony_objinfo, 1);
+	save_object(&sony_params, 0xFFFFC002, name, sony_objinfo, 1);
 	
 	//display_hexdump(data, malloc_usable_size ((void*)data));
 	
