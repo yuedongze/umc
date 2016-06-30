@@ -40,10 +40,10 @@ def hello():
 	if request.method == 'GET':
 		if (time()-tmr.t) > 0.1:
 			if (tmr.cnt == 0):
-				sony.getliveobj('/static/object1.jpg')
+				sony.getliveobj('static/object1.jpg')
 				tmr.cnt = 1
 			else:
-				sony.getliveobj('/static/object2.jpg')
+				sony.getliveobj('static/object2.jpg')
 				tmr.cnt = 0
 			tmr.t = time()
 		
