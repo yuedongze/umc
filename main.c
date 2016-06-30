@@ -1261,7 +1261,7 @@ static PyObject * getliveobj(PyObject * self, PyObject * args){
 	PyObject * res;
 	char* data;
 	
-	ptp_getobject (&sony_params, 0xFFFFC002, data)
+	ptp_getobject (&sony_params, 0xFFFFC002, data);
 	
 	display_hexdump(data, malloc_usable_size ((void*)data));
 	
