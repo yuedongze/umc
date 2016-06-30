@@ -3,7 +3,7 @@ import os
 import sony
 import parser
 from time import *
-app = Flask(__name__)
+app = Flask(__name__, static_folder='~/Desktop/umc')
 
 class tmr:
 	t = 0
