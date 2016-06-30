@@ -3,10 +3,11 @@ import os
 import sony
 import parser
 from time import *
-app = Flask(__name__, static_folder='~/Desktop/umc')
+app = Flask(__name__)
 
 class tmr:
 	t = 0
+	cnt = 0
 
 def umc_start():
 	sony.connect()
@@ -38,7 +39,12 @@ def hello():
 		
 	if request.method == 'GET':
 		if (time()-tmr.t) > 0.1:
-			sony.getliveobj('object')
+			if (tmr.cnt == 0):
+				sony.getliveobj('/static/object1.jpg')
+				tmr.cnt = 1
+			else:
+				sony.getliveobj('/static/object2.jpg')
+				tmr.cnt = 0
 			tmr.t = time()
 		
 	if request.method == 'POST':
@@ -88,15 +94,22 @@ def hello():
 	</form>
 		  <p>............LiveView............</p>
 	  
-		  <img src="object" id="liveview" />
+		  <img src="static/object.jpg" id="liveview" />
 
 	<p><button id="reload" onclick="updateimage()">Live View</button></p>
 	<p><button id="stop">Stop</button></p>
 
 	<script type="text/javascript">
 		  x=document.getElementById("liveview");
+		  counter = 0
 		  function updateimage(){
-			  x.src="object?rand=" + Math.random();
+			  if (counter == 0) {
+			  	x.src="static/object1.jpg";
+				counter = 1;
+			  } else {
+			  	x.src="static/object2.jpg";
+				counter = 0;
+			  }
 			  timer1 = setTimeout(updateimage, 500);
 		  }
 	</script>
@@ -118,6 +131,7 @@ def hello():
 	</form>
     <h2>Current Status: ''' + res +  '''</h2>
     <h2>Requested Information: ''' + inf + '''</h2>
+	</body>
 	</html>
     '''
 
