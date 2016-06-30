@@ -1305,7 +1305,7 @@ save_object(PTPParams *params, uint32_t handle, char* filename, PTPObjectInfo oi
 	printf ("Saving file: \"%s\" ",filename);
 	fflush(NULL);
 	
-	for(uint_t si = 0; si < (isize/sizeof(char)); i++)
+	for(uint_t si = 0; si < (isize/sizeof(char)); si++)
 	{
 		printf("%i.",si);
 		image[si] = imgbuf[si+(offset/sizeof(char))];
