@@ -58,13 +58,19 @@ def hello():
     <title>Take a video</title>
     <h1>Click to take video :)</h1>
     <form action="" method=post enctype=multipart/form-data>
-      <p><input name=shoot type=submit value=SHOOT>
-      <p><input name=stop type=submit value=STOP>
-      <p><input name=cap type=submit value=Take a Pic>
+      <p><input name=shoot type=submit value=SHOOT></p>
+      <p><input name=stop type=submit value=STOP></p>
+      <p><input name=cap type=submit value="Take a Pic"></p>
+	  <p>............LiveView............</p>
+	  
+	  <img src="object" id="liveview" />
+	  
+	  <input name=reload type=submit/>
+	  
       <p>............Controller............</p>
       <p>Request Prop: <input name=val type=text> <input name=sub type=submit value=REQUEST> </p>
       <p>Set Prop: </p>
-      <p>Prop ID: <input name=pid type=text> 
+      <p>Prop ID: <input name=pid type=text/> 
       <input name=pdata type=text/>
       <input name=pset type=submit value=SET> </p>
 
