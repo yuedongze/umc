@@ -28,12 +28,13 @@ def capture_still():
 	sleep(0.2)
 
 @app.after_request
-def updater():
+def updater(response):
 	"""docstring for updater"""
 	if request.method == 'GET':
 		if (time()-tmr.t) > 0.1:
 			sony.getliveobj('static/object.jpg')
 			tmr.t = time()
+	return response
 
 @app.route('/', methods=['GET', 'POST'])
 def hello():
