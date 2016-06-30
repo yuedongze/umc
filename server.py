@@ -61,33 +61,63 @@ def hello():
 			capture_still()
 
 	return '''
-    <!doctype html>
-    <title>Take a video</title>
-    <h1>Click to take video :)</h1>
-    <form action="" method=post enctype=multipart/form-data>
-      <p><input name=shoot type=submit value=SHOOT></p>
-      <p><input name=stop type=submit value=STOP></p>
-      <p><input name=cap type=submit value="Take a Pic"></p>
-	  <p>............LiveView............</p>
-	  
-	  <img src="object" id="liveview" />
-	  
-	  <input name=reload type=submit/>
-	  
-      <p>............Controller............</p>
-      <p>Request Prop: <input name=val type=text> <input name=sub type=submit value=REQUEST> </p>
-      <p>Set Prop: </p>
-      <p>Prop ID: <input name=pid type=text/> 
-      <input name=pdata type=text/>
-      <input name=pset type=submit value=SET> </p>
+	<!DOCTYPE html>
+	<html>
+	<head>
+		<script
+		src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+		<script>
+		$(document).ready(function(){
+			$("#stop").click(function(){
+				clearTimeout(timer1);
+			});
+		});
+		</script>
+	</head>
 
-      <p>Control Device: </p>
-      <p>Control ID: <input name=cid type=text/> 
-      <input name=cdata type=text/>
-      <input name=cset type=submit value=SEND> </p>
-    </form>
+	<title>Take a video</title>
+	<h1>Click to take video :)</h1>
+	<body>
+	<form action="" method=post enctype=multipart/form-data>
+	
+	    <p><input name=shoot type=submit value=SHOOT id=haha></p>
+	    <p><input name=stop type=submit value=STOP></p>
+	    <p><input name=cap type=submit value="Take a Pic"></p>
+
+	</form>
+		  <p>............LiveView............</p>
+	  
+		  <img src="object" id="liveview" />
+
+	<p><button id="reload" onclick="updateimage()">Live View</button></p>
+	<p><button id="stop">Stop</button></p>
+
+	<script type="text/javascript">
+		  x=document.getElementById("liveview");
+		  function updateimage(){
+			  x.src="object?rand=" + Math.random();
+			  timer1 = setTimeout(updateimage, 500);
+		  }
+	</script>
+
+	<form action="" method=post enctype=multipart/form-data>
+		
+	    <p>............Controller............</p>
+	    <p>Request Prop: <input name=val type=text> <input name=sub type=submit value=REQUEST> </p>
+	    <p>Set Prop: </p>
+	    <p>Prop ID: <input name=pid type=text/> 
+	    <input name=pdata type=text/>
+	    <input name=pset type=submit value=SET> </p>
+
+	    <p>Control Device: </p>
+	    <p>Control ID: <input name=cid type=text/> 
+	    <input name=cdata type=text/>
+	    <input name=cset type=submit value=SEND> </p>
+	
+	</form>
     <h2>Current Status: ''' + res +  '''</h2>
     <h2>Requested Information: ''' + inf + '''</h2>
+	</html>
     '''
 
 if __name__ == "__main__":
