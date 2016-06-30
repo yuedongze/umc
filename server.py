@@ -27,7 +27,7 @@ def capture_still():
 	sony.control(0xD61D, '0100')
 	sleep(0.2)
 
-@app.route('/<path:filename>')
+@app.route('/static/<path:filename>')
 def updater():
 	"""docstring for updater"""
 	if request.method == 'GET':
