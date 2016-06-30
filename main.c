@@ -1267,7 +1267,7 @@ static PyMethodDef SonyMethods[] = {
     {"shutdown", shutdown_wrapper, METH_VARARGS, "Shutdown"},
     {"setprop", setprop_wrapper, METH_VARARGS, "Set Properties"},
     {"control", control_wrapper, METH_VARARGS, "Control Device"},
-	{"getliveinfo", getliveinfo, METH_VARARGS, "Get LiveView Info"};
+	{"getliveinfo", getliveinfo, METH_VARARGS, "Get LiveView Info"},
     {NULL, NULL, 0, NULL}
 };
 
