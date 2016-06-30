@@ -31,7 +31,7 @@ def capture_still():
 def updater(response):
 	"""docstring for updater"""
 	if request.method == 'GET':
-		if (time()-tmr.t) > 0.1:
+		if (time()-tmr.t) > 0.035:
 			sony.getliveobj('static/object.jpg')
 			tmr.t = time()
 	return response
@@ -107,7 +107,7 @@ def hello():
 		  counter = 0
 		  function updateimage(){
 			  x.src="static/object.jpg?t="+ new Date().getTime();
-			  timer1 = setTimeout(updateimage, 100);
+			  timer1 = setTimeout(updateimage, 40);
 		  }
 	</script>
 
