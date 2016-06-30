@@ -32,6 +32,7 @@ struct usb_device *sony_dev;
 int sony_busn = 0, sony_devn = 0;
 char sony_data_file[256];
 PTPObjectInfo sony_objinfo;
+char * imgbuf;
 
 void
 display_hexdump(char *data, size_t size)
@@ -1265,7 +1266,20 @@ save_object(PTPParams *params, uint32_t handle, char* filename, PTPObjectInfo oi
 	char *image;
 	int ret;
 	struct utimbuf timebuf;
-
+	
+	
+	// obtaining object into buffer first
+	if (imgbuf == NULL) imgbuf = malloc(oi.ObjectCompressedSize);
+	memset(imgbuf, 0, oi.ObjectCompressedSize);
+	
+	ret=ptp_getobject(params,handle,&imgbuf);
+	uint16_t offset = (uint32_t)*((uint32_t*)imgbuf);
+	printf("offset: %x.\n",offset);
+	uint16_t isize = (uint32_t)*(((uint32_t*)imgbuf)+1);
+	printf("size: %x.\n",isize);
+	
+	// open file and copy the buf to file
+	
 	file=open(filename, (overwrite==OVERWRITE_EXISTING?0:O_EXCL)|O_RDWR|O_CREAT|O_TRUNC,S_IRWXU|S_IRGRP);
 	if (file==-1) {
 		if (errno==EEXIST) {
@@ -1275,13 +1289,13 @@ save_object(PTPParams *params, uint32_t handle, char* filename, PTPObjectInfo oi
 		perror("open");
 		goto out;
 	}
-	lseek(file,oi.ObjectCompressedSize-1,SEEK_SET);
+	lseek(file,isize-1,SEEK_SET);
 	ret=write(file,"",1);
 	if (ret==-1) {
 	    perror("write");
 	    goto out;
 	}
-	image=mmap(0,oi.ObjectCompressedSize,PROT_READ|PROT_WRITE,MAP_SHARED,
+	image=mmap(0,isize,PROT_READ|PROT_WRITE,MAP_SHARED,
 		file,0);
 	if (image==MAP_FAILED) {
 		perror("mmap");
@@ -1290,11 +1304,13 @@ save_object(PTPParams *params, uint32_t handle, char* filename, PTPObjectInfo oi
 	}
 	printf ("Saving file: \"%s\" ",filename);
 	fflush(NULL);
-	ret=ptp_getobject(params,handle,&image);
-	uint16_t offset = (uint32_t)*((uint32_t*)image);
-	printf("offset: %x.\n",offset);
-	uint16_t isize = (uint32_t)*(((uint32_t*)image)+1);
-	printf("offset: %x.\n",isize);
+	
+	for(int i = 0; i < isize; ++i)
+	{
+		image[i] = data[i+offset];
+	}
+	
+
 	munmap(image,oi.ObjectCompressedSize);
 	if (close(file)==-1) {
 	    perror("close");
