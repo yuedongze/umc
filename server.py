@@ -103,7 +103,7 @@ def hello():
 		  counter = 0
 		  function updateimage(){
 			  x.src="static/object.jpg?t="+ new Date().getTime();
-			  timer1 = setTimeout(updateimage, 500);
+			  timer1 = setTimeout(updateimage, 100);
 		  }
 	</script>
 
