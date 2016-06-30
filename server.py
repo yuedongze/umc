@@ -2,8 +2,10 @@ from flask import Flask,request,url_for,redirect
 import os
 import sony
 import parser
-from time import sleep
+from time import *
 app = Flask(__name__)
+
+t=0
 
 def umc_start():
 	sony.connect()
@@ -32,7 +34,12 @@ def hello():
 	lib = parser.parse_devinfo(sony.info())
 	if (lib['0xd6cd'])['cval'] == '01':
 		res = 'Recording'
-
+		
+	if request.method == 'GET':
+		if (time.time()-t) > 0.1:
+			sony.getliveobj()
+			t = time.time()
+		
 	if request.method == 'POST':
 		if 'shoot' in request.form.keys():
 			sony.mstart()
