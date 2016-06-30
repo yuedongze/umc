@@ -1257,6 +1257,17 @@ static PyObject * control_wrapper(PyObject * self, PyObject * args){
     return res;
 }
 
+static PyObject * getliveobj(PyObject * self, PyObject * args){
+	PyObject * res;
+	char* data;
+	
+	ptp_getobject (&sony_params, 0xFFFFC002, data)
+	
+	display_hexdump(data, malloc_usable_size ((void*)data));
+	
+	res = PyString_FromString("Finished");
+	return res;
+}
 
 static PyMethodDef SonyMethods[] = {
     {"connect", connect_wrapper, METH_VARARGS, "Connection" },
@@ -1268,6 +1279,7 @@ static PyMethodDef SonyMethods[] = {
     {"setprop", setprop_wrapper, METH_VARARGS, "Set Properties"},
     {"control", control_wrapper, METH_VARARGS, "Control Device"},
 	{"getliveinfo", getliveinfo, METH_VARARGS, "Get LiveView Info"},
+	{"getliveobj", getliveobj, METH_VARARGS, "Get LiveView Object"},
     {NULL, NULL, 0, NULL}
 };
 
