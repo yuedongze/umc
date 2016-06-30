@@ -1173,6 +1173,19 @@ static PyObject * setprop_wrapper(PyObject * self, PyObject * args){
     return res;
 }
 
+static PyObject * getliveinfo(PyObject * self, PyObject * args){
+	PyObject * res;
+	PTPObjectInfo objinfo;
+	
+	ptp_getobjectinfo (&sony_params, 0xFFFFC002, &objinfo);
+	
+	printf("%x, %x.\n", objinfo.ImagePixWidth, objinfo.ImagePixHeight);
+	//printf("%x, %x.\n", objinfo.ImagePixWidth, objinfo.ImagePixHeight);
+	
+	res = PyString_FromString("Finished");
+	return res;
+}
+
 static PyObject * control_wrapper(PyObject * self, PyObject * args){
     PyObject * res;
     char *data = NULL;
@@ -1254,6 +1267,7 @@ static PyMethodDef SonyMethods[] = {
     {"shutdown", shutdown_wrapper, METH_VARARGS, "Shutdown"},
     {"setprop", setprop_wrapper, METH_VARARGS, "Set Properties"},
     {"control", control_wrapper, METH_VARARGS, "Control Device"},
+	{"getliveinfo", getliveinfo, METH_VARARGS, "Get LiveView Info"};
     {NULL, NULL, 0, NULL}
 };
 

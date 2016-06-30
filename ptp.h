@@ -280,3 +280,9 @@ uint16_t ptp_sendgenericrequest (PTPParams* params, uint16_t reqcode,
                                  uint32_t direction, long sendlen);
 
 void ptp_perror			(PTPParams* params, uint16_t error);
+
+uint16_t ptp_getobjectinfo	(PTPParams *params, uint32_t handle,
+				PTPObjectInfo* objectinfo);
+
+uint16_t ptp_getobject		(PTPParams *params, uint32_t handle,
+				char** object);
