@@ -493,3 +493,51 @@ ptp_perror(PTPParams* params, uint16_t error) {
     ptp_error(params, "PTP: Error 0x%04x", error);
     
 }
+
+
+/**
+ * ptp_ptp_getobjectinfo:
+ * params:	PTPParams*
+ *		handle			- object Handler
+ *		objectinfo		- pointer to PTPObjectInfo structure
+ *
+ * Fills objectinfo structure with appropriate data of object given by
+ * hander.
+ *
+ * Return values: Some PTP_RC_* code.
+ **/
+uint16_t
+ptp_getobjectinfo (PTPParams* params, uint32_t handle,
+			PTPObjectInfo* objectinfo)
+{
+	uint16_t ret;
+	PTPContainer ptp;
+	char* oi=NULL;
+
+	ptp_debug(params,"PTP: Obtaining ObjectInfo for object 0x%08x",
+		handle);
+
+	PTP_CNT_INIT(ptp);
+	ptp.Code=PTP_OC_GetObjectInfo;
+	ptp.Param1=handle;
+	ptp.Nparam=1;
+	ret=ptp_transaction(params, &ptp, PTP_DP_GETDATA, 0, &oi);
+	if (ret == PTP_RC_OK) ptp_unpack_OI(params, oi, objectinfo);
+	free(oi);
+	return ret;
+}
+
+uint16_t
+ptp_getobject (PTPParams* params, uint32_t handle, char** object)
+{
+	PTPContainer ptp;
+
+	ptp_debug(params,"PTP: Downloading Object 0x%08x",
+		handle);
+
+	PTP_CNT_INIT(ptp);
+	ptp.Code=PTP_OC_GetObject;
+	ptp.Param1=handle;
+	ptp.Nparam=1;
+	return ptp_transaction(params, &ptp, PTP_DP_GETDATA, 0, object);
+}
