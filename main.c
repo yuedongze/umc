@@ -31,6 +31,7 @@ PTP_USB sony_ptp_usb;
 struct usb_device *sony_dev;
 int sony_busn = 0, sony_devn = 0;
 char sony_data_file[256];
+PTPObjectInfo sony_objinfo;
 
 void
 display_hexdump(char *data, size_t size)
@@ -1257,11 +1258,64 @@ static PyObject * control_wrapper(PyObject * self, PyObject * args){
     return res;
 }
 
+void
+save_object(PTPParams *params, uint32_t handle, char* filename, PTPObjectInfo oi, int overwrite)
+{
+	int file;
+	char *image;
+	int ret;
+	struct utimbuf timebuf;
+
+	file=open(filename, (overwrite==OVERWRITE_EXISTING?0:O_EXCL)|O_RDWR|O_CREAT|O_TRUNC,S_IRWXU|S_IRGRP);
+	if (file==-1) {
+		if (errno==EEXIST) {
+			printf("Skipping file: \"%s\", file exists!\n",filename);
+			goto out;
+		}
+		perror("open");
+		goto out;
+	}
+	lseek(file,oi.ObjectCompressedSize-1,SEEK_SET);
+	ret=write(file,"",1);
+	if (ret==-1) {
+	    perror("write");
+	    goto out;
+	}
+	image=mmap(0,oi.ObjectCompressedSize,PROT_READ|PROT_WRITE,MAP_SHARED,
+		file,0);
+	if (image==MAP_FAILED) {
+		perror("mmap");
+		close(file);
+		goto out;
+	}
+	printf ("Saving file: \"%s\" ",filename);
+	fflush(NULL);
+	ret=ptp_getobject(params,handle,&image);
+	munmap(image,oi.ObjectCompressedSize);
+	if (close(file)==-1) {
+	    perror("close");
+	}
+	timebuf.actime=oi.ModificationDate;
+	timebuf.modtime=oi.CaptureDate;
+	utime(filename,&timebuf);
+	if (ret!=PTP_RC_OK) {
+		printf ("error!\n");
+		ptp_perror(params,ret);
+		if (ret==PTP_ERROR_IO) clear_stall((PTP_USB *)(params->data));
+	} else {
+		printf("is done.\n");
+	}
+out:
+	return;
+}
+
 static PyObject * getliveobj(PyObject * self, PyObject * args){
 	PyObject * res;
 	char* data;
 	
-	ptp_getobject (&sony_params, 0xFFFFC002, data);
+	ptp_getobjectinfo (&sony_params, 0xFFFFC002, &sony_objinfo);
+	
+	save_object(&sony_params, 0xFFFFC002, "object", sony_objinfo, 1);
 	
 	//display_hexdump(data, malloc_usable_size ((void*)data));
 	

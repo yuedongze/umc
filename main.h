@@ -19,6 +19,10 @@
 #define USB_TIMEOUT		5000
 #define USB_CAPTURE_TIMEOUT	20000
 
+/* filename overwrite */
+#define OVERWRITE_EXISTING	1
+#define	SKIP_IF_EXISTS		0
+
 typedef struct _PTP_USB PTP_USB;
 struct _PTP_USB {
     usb_dev_handle* handle;
