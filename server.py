@@ -27,6 +27,14 @@ def capture_still():
 	sony.control(0xD61D, '0100')
 	sleep(0.2)
 
+@app.route('/<path:filename>')
+def updater():
+	"""docstring for updater"""
+	if request.method == 'GET':
+		if (time()-tmr.t) > 0.1:
+			sony.getliveobj('static/object.jpg')
+			tmr.t = time()
+
 @app.route('/', methods=['GET', 'POST'])
 def hello():
 	res = 'Not Recording'
@@ -35,11 +43,6 @@ def hello():
 	lib = parser.parse_devinfo(sony.info())
 	if (lib['0xd6cd'])['cval'] == '01':
 		res = 'Recording'
-		
-	if request.method == 'GET':
-		if (time()-tmr.t) > 0.1:
-			sony.getliveobj('static/object.jpg')
-			tmr.t = time()
 		
 	if request.method == 'POST':
 		if 'shoot' in request.form.keys():
@@ -60,7 +63,8 @@ def hello():
 
 		if 'cap' in request.form.keys():
 			capture_still()
-
+	else:
+		sony.getliveobj('static/object.jpg')
 	return '''
 	<!DOCTYPE html>
 	<html>
