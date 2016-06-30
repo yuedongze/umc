@@ -1305,14 +1305,14 @@ save_object(PTPParams *params, uint32_t handle, char* filename, PTPObjectInfo oi
 	printf ("Saving file: \"%s\" ",filename);
 	fflush(NULL);
 	
-	for(size_t i = 0; i < (10000); ++i)
+	for(uint_t si = 0; si < (isize/sizeof(char)); i++)
 	{
-		printf("%i.",i);
-		image[i] = imgbuf[i+(offset/sizeof(char))];
+		printf("%i.",si);
+		image[si] = imgbuf[si+(offset/sizeof(char))];
 	}
 	
 
-	munmap(image,oi.ObjectCompressedSize);
+	munmap(image,isize);
 	if (close(file)==-1) {
 	    perror("close");
 	}
