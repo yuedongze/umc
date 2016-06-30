@@ -1293,7 +1293,7 @@ save_object(PTPParams *params, uint32_t handle, char* filename, PTPObjectInfo oi
 	ret=ptp_getobject(params,handle,&image);
 	uint16_t offset = (uint32_t)*((uint32_t*)image);
 	printf("offset: %x.\n",offset);
-	uint16_t isize = (uint32_t)*(()(uint32_t*)image)+1);
+	uint16_t isize = (uint32_t)*(((uint32_t*)image)+1);
 	printf("offset: %x.\n",isize);
 	munmap(image,oi.ObjectCompressedSize);
 	if (close(file)==-1) {
