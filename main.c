@@ -1264,7 +1264,7 @@ save_object(PTPParams *params, uint32_t handle, char* filename, PTPObjectInfo oi
 {
 	int file;
 	char *image;
-	int ret;
+	int ret,rr;
 	struct utimbuf timebuf;
 	
 	
@@ -1272,7 +1272,7 @@ save_object(PTPParams *params, uint32_t handle, char* filename, PTPObjectInfo oi
 	if (imgbuf == NULL) imgbuf = malloc(oi.ObjectCompressedSize);
 	memset(imgbuf, 0, oi.ObjectCompressedSize);
 	
-	ret=ptp_getobject(params,handle,&imgbuf);
+	rr=ptp_getobject(params,handle,&imgbuf);
 	uint16_t offset = (uint32_t)*((uint32_t*)imgbuf);
 	printf("offset: %x.\n",offset);
 	uint16_t isize = (uint32_t)*(((uint32_t*)imgbuf)+1);
@@ -1307,10 +1307,8 @@ save_object(PTPParams *params, uint32_t handle, char* filename, PTPObjectInfo oi
 	
 	for(int si = 0; si < (isize/sizeof(char)); si++)
 	{
-		printf("%i.",si);
 		image[si] = imgbuf[si+(offset/sizeof(char))];
 	}
-	
 
 	munmap(image,isize);
 	if (close(file)==-1) {
@@ -1319,7 +1317,7 @@ save_object(PTPParams *params, uint32_t handle, char* filename, PTPObjectInfo oi
 	timebuf.actime=oi.ModificationDate;
 	timebuf.modtime=oi.CaptureDate;
 	utime(filename,&timebuf);
-	if (ret!=PTP_RC_OK) {
+	if (rr!=PTP_RC_OK) {
 		printf ("error!\n");
 		ptp_perror(params,ret);
 		//if (ret==PTP_ERROR_IO) clear_stall((PTP_USB *)(params->data));
