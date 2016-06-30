@@ -1307,7 +1307,7 @@ save_object(PTPParams *params, uint32_t handle, char* filename, PTPObjectInfo oi
 	
 	for(int i = 0; i < (isize/sizeof(char)); ++i)
 	{
-		image[i] = imgbuf[i+(offset)];
+		image[i] = imgbuf[i+(offset/sizeof(char))];
 	}
 	
 
